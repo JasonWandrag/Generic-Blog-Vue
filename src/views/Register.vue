@@ -6,34 +6,38 @@
       type="text"
       v-model="name"
       placeholder="Name"
+      required
     />
     <input
       class="form-input neu-border-inset"
       type="email"
       v-model="email"
       placeholder="Email"
+      required
     />
     <input
       class="form-input neu-border-inset"
       type="text"
       v-model="contact"
       placeholder="Contact Number"
+      required
     />
     <input
       class="form-input neu-border-inset"
       type="password"
       v-model="password"
       placeholder="Password"
+      required
     />
     <button type="submit" class="form-btn neu-border">Sign up</button>
-    <div class="form-social-login">
+    <!-- <div class="form-social-login">
       <button class="form-btn neu-border form-social-btn">
         <i class="fab fa-google"></i>
       </button>
       <button class="form-btn neu-border form-social-btn">
         <i class="fab fa-facebook-f"></i>
       </button>
-    </div>
+    </div> -->
 
     <p>
       Already a member?
@@ -53,7 +57,27 @@ export default {
   },
   methods: {
     register() {
-      console.log(this.name, this.email, this.contact, this.password);
+      fetch("https://generic-blog-api.herokuapp.com/users", {
+        method: "POST",
+        body: JSON.stringify({
+          name: this.name,
+          email: this.email,
+          contact: this.contact,
+          password: this.password,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          alert("User registered");
+          localStorage.setItem("jwt", json.jwt);
+          this.$router.push({ name: "Blogs" });
+        })
+        .catch((err) => {
+          alert(err);
+        });
     },
   },
 };

@@ -2,12 +2,18 @@
   <nav id="nav" :class="{ active: isActive }">
     <router-link @click="toggleNav" to="/">Home</router-link>
     <!-- <router-link @click="toggleNav" to="/about">About</router-link> -->
+
+    <router-link @click="toggleNav" :to="{ name: 'Blogs' }">Blogs</router-link>
+    <router-link @click="toggleNav" :to="{ name: 'CreateBlog' }"
+      >Create Blog</router-link
+    >
+    <router-link @click="logout" class="logout" :to="{ name: 'Home' }"
+      >Log out</router-link
+    >
     <router-link @click="toggleNav" :to="{ name: 'Login' }">Login</router-link>
     <router-link @click="toggleNav" :to="{ name: 'Register' }"
       >Register</router-link
     >
-    <router-link @click="toggleNav" :to="{ name: 'Blogs' }">Blogs</router-link>
-    <router-link @click="toggleNav" :to="{ name: 'CreateBlog' }">Create Blog</router-link>
   </nav>
   <button id="nav-btn" @click="toggleNav">
     <i className="fas fa-bars"></i>
@@ -23,6 +29,10 @@ export default {
   methods: {
     toggleNav() {
       this.isActive = !this.isActive;
+    },
+    logout() {
+      localStorage.clear();
+      this.toggleNav;
     },
   },
 };
@@ -57,7 +67,7 @@ export default {
     color: #2c3e50;
     padding: 20px;
     text-decoration: none;
-    &.router-link-exact-active {
+    &.router-link-exact-active:not(.logout) {
       color: #42b983;
     }
   }

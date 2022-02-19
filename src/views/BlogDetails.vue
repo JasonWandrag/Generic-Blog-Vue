@@ -1,25 +1,18 @@
 <template>
   <div v-if="blog">
     <div class="blog">
-      <img
-        class="blog-image neu-border"
-        :src="blog.post_img"
-        :alt="blog.post_title"
-      />
+      <img class="blog-image neu-border" :src="blog.img" :alt="blog.title" />
       <div class="blog-details">
-        <h2>{{ blog.post_title }}</h2>
-        <h4>{{ blog.post_date }}</h4>
-        <p>{{ blog.post_body }}</p>
+        <h2>{{ blog.title }}</h2>
+        <h4>{{ blog.author_name }} - {{ blog.date }}</h4>
+        <p>{{ blog.body }}</p>
       </div>
     </div>
   </div>
   <div v-else>Loading the blog...</div>
 </template>
 <script>
-// import blogCard from "@/components/blogs/blogCard.vue";
-
 export default {
-  // components: { blogCard },
   props: ["id"],
   data() {
     return {
@@ -27,42 +20,64 @@ export default {
     };
   },
   mounted() {
-    // Fetch goes here
+    fetch("https://generic-blog-api.herokuapp.com/posts/" + this.id, {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then(async (json) => {
+        this.blog = json;
+        await fetch(
+          "https://generic-blog-api.herokuapp.com/users/" + json.author,
+          {
+            method: "GET",
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
+        )
+          .then((response) => response.json())
+          .then((json) => {
+            this.blog.author_name = json.name;
+          });
+      });
   },
 };
 </script>
 <style>
 .blog {
   display: flex;
+  flex-direction: column;
   padding: 0 10%;
-  /* max-width: 600px; */
   margin-inline: auto;
   align-items: stretch;
   gap: 30px;
 }
 .blog-image {
   padding: 10px;
-  width: 50%;
-  max-height: 80vh;
-  object-fit: contain;
+  width: 100%;
+  min-width: 100%;
+  max-height: 50vh;
+  object-fit: cover;
 }
 .blog-details {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   justify-content: center;
-  text-align: end;
+  text-align: left;
   gap: 8px;
 }
 
 .blogs-container {
   display: flex;
   flex-wrap: wrap;
-  /* max-width: 600px; */
   width: 100%;
   margin-inline: auto;
   padding: 30px;
-  /* overflow: auto; */
   gap: 2%;
   justify-content: stretch;
   align-items: stretch;

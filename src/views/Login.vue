@@ -14,14 +14,14 @@
       placeholder="Password"
     />
     <button type="submit" class="form-btn neu-border">Sign in</button>
-    <div class="form-social-login">
+    <!-- <div class="form-social-login">
       <button class="form-btn neu-border form-social-btn">
         <i class="fab fa-google"></i>
       </button>
       <button class="form-btn neu-border form-social-btn">
         <i class="fab fa-facebook-f"></i>
       </button>
-    </div>
+    </div> -->
 
     <p>
       Not a member?
@@ -39,7 +39,25 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.email, this.password);
+      fetch("https://generic-blog-api.herokuapp.com/users", {
+        method: "PATCH",
+        body: JSON.stringify({
+          email: this.email,
+          password: this.password,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          localStorage.setItem("jwt", json.jwt);
+          alert("User logged in");
+          this.$router.push({ name: "Blogs" });
+        })
+        .catch((err) => {
+          alert(err);
+        });
     },
   },
 };
